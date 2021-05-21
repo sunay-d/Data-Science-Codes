@@ -2,9 +2,14 @@
 
 import pandas as pd
 
+# VERİ YÜKLEME
+#---------------------------------------------
 veriler = pd.read_csv('eksikveriler.csv')
 print(veriler)
 
+
+# EKSİK VERİ YERİNE VERİ ATAMA
+#---------------------------------------------
 from sklearn.impute import SimpleImputer
 
 imputer = SimpleImputer(strategy="mean")
@@ -14,8 +19,40 @@ yas = veriler.iloc[:,1:4].values
 # fit ve transformu ayrı ayrı da kullanabiliriz.
 
 veri = imputer.fit_transform(yas)
-print(veri)
 
-veriler.iloc[:,1:4] = veri
+# KATEGORİK VERİLER
+#--------------------------------------------
+from sklearn import preprocessing
 
-print(veriler)
+le = preprocessing.LabelEncoder()                     # LabelEncoder farklı kategorik değerlere 0'dan başlayarak değerler atar.
+
+ulke[:,0] = le.fit_transform(veriler.iloc[:,0])
+
+print(ulke)
+
+ohe = preprocessing.OneHotEncoder()                   # OneHotEncoder her kategori sınıfını bir sütuna dönüştürür ve 0 ve 1 değerlerini atar. 
+
+ulke = ohe.fit_transform(ulke).toarray()
+
+# VERİ KÜMELERİNİN BİRLEŞTİRİLMESİ
+#-------------------------------------------
+sonuc = pd.DataFrame(data = ulke, columns = ['fr','tr','us'])
+sonuc2 = pd.DataFrame(data = veri, columns = ['boy','kilo','yas'])
+sonuc3 = pd.DataFrame(data = cinsiyet, columns = ['cinsiyet'])
+s = pd.concat([sonuc,sonuc2], axis=1)
+
+# VERİ KÜMESİNİN EĞİTİM VE TEST OLARAK BÖLÜNMESİ
+#-------------------------------------------
+from sklearn.model_selection import train_test_split
+
+x_train, x_test, y_train, y_test = train_test_split(s, sonuc3, test_size=0.33, random_state=0)
+
+# ÖZNİTELİK ÖLÇEKLEME
+#-------------------------------------------
+from sklearn.preprocessing import StandardScaler
+
+sc = StandardScaler()
+
+X_train = sc.fit_transform(x_train)
+X_test = sc.fit_transform(x_test)
+
