@@ -1,0 +1,47 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[1]:
+
+
+import tabula
+import os
+
+
+# In[2]:
+
+
+file = "hb.pdf"
+
+
+# read_pdf() function extracts all tables from a pdf file 
+# 
+
+# In[29]:
+
+
+tables = tabula.read_pdf(file, pages=[13,14,15])
+
+
+# Print the number of tables extracted
+
+# In[27]:
+
+
+print(tables)
+
+
+# In[30]:
+
+
+# save them in a folder
+folder_name = "tables"
+if not os.path.isdir(folder_name):
+    os.mkdir(folder_name)
+# iterate over extracted tables and export as excel individually
+for i, table in enumerate(tables, start=1):
+    table.to_excel(os.path.join(folder_name, f"table_{i}.xlsx"), index=False)
+
+
+# In[ ]:
+
