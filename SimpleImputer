@@ -1,0 +1,21 @@
+#Eksik veri: SimpleImputer
+
+import pandas as pd
+
+veriler = pd.read_csv('eksikveriler.csv')
+print(veriler)
+
+from sklearn.impute import SimpleImputer
+
+imputer = SimpleImputer(strategy="mean")
+
+yas = veriler.iloc[:,1:4].values
+
+# fit ve transformu ayrı ayrı da kullanabiliriz.
+
+veri = imputer.fit_transform(yas)
+print(veri)
+
+veriler.iloc[:,1:4] = veri
+
+print(veriler)
